@@ -3,10 +3,7 @@ package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SkillRepository {
 
@@ -26,6 +23,37 @@ public class SkillRepository {
             String skill_name = resultSet.getString("skill_name");
             String description = resultSet.getString("description");
             skill = new Skill(skill_id, skill_name, description);
+        }
+        return skill;
+    }
+
+    public Skill findByName(String name) throws SQLException {
+        Skill skill = null;
+        String query = "SELECT * FROM hcm_skill where skill_name = " + name;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            int skill_id = resultSet.getInt("skill_id");
+            String skill_name = resultSet.getString("skill_name");
+            String description = resultSet.getString("description");
+            skill = new Skill(skill_id, skill_name, description);
+        }
+        return skill;
+
+    }
+
+    public Skill save(Skill skill) throws SQLException {
+        String insertQuery = "insert into hcm_skill(skill_name,description) values(?,?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, skill.getName());
+        preparedStatement.setString(1, skill.getDescription());
+        int affectedRows = preparedStatement.executeUpdate(insertQuery);
+        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                skill.setId(generatedKeys.getInt(1));
+            } else {
+                throw new SQLException("Creating Skill failed, No Skill Id obtained.");
+            }
         }
         return skill;
     }

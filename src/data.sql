@@ -4,7 +4,7 @@ show tables;
 
 create table hcm_skill(
 	skill_id int primary key auto_increment,
-    skill_name varchar(255),
+    skill_name varchar(255) unique not null,
     description varchar(255)
 );
 
@@ -15,17 +15,18 @@ create table hcm_skill_matrix(
     acquired varchar(255)
 );
 
+create table hcm_employee(
+	emp_id int primary key auto_increment,
+    emp_name varchar(255),
+    department varchar(255)
+);
+
 create table hcm_employee_skill_matrix(
 	emp_id int references hcm_employee(emp_id),
     skill_matrix_id int references hcm_skill_matrix(skill_matrix_id),
     primary key(emp_id,skill_matrix_id)
 );
 
-create table hcm_employee(
-	emp_id int primary key auto_increment,
-    emp_name varchar(255),
-    department varchar(255)
-);
 
                                                     -- Select Queries
 
@@ -34,7 +35,7 @@ select * from hcm_skill_matrix;
 select * from hcm_employee_skill_matrix;
 select * from hcm_employee;
 
-                                                    --Insert Queries
+                                                    -- Insert Queries
 
 insert into hcm_skill(skill_name,description) values("C Language","Beautiful Language");
 insert into hcm_employee(emp_name,department) values("Vishal", "ABC");

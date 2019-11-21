@@ -2,10 +2,9 @@ package com.tavisca.trainings.gce.prudentia.hcm.models.classes;
 
 import com.tavisca.trainings.gce.prudentia.hcm.models.enums.Level;
 
-import java.io.Serializable;
 import java.time.Instant;
 
-public class SkillMatrix implements Serializable {
+public class SkillMatrix {
 
     private Skill skill;
     private Level proficiency;

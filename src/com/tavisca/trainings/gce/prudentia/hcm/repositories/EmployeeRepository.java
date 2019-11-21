@@ -2,6 +2,7 @@ package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Employee;
+import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.SkillMatrix;
 
 import java.sql.*;
@@ -15,28 +16,39 @@ public class EmployeeRepository {
 
     private Connection connection;
     private SkillMatrixRepository skillMatrixRepository;
+    private SkillRepository skillRepository;
 
     public EmployeeRepository() throws SQLException, ClassNotFoundException {
         this.connection = DBManager.getConnection();
         skillMatrixRepository = new SkillMatrixRepository();
+        skillRepository = new SkillRepository();
     }
 
     public Employee save(Employee employee) throws SQLException {
         String insertQuery = "insert into hcm_employee(emp_name,department) values(?,?)";
-        PreparedStatement statement = connection.prepareStatement(insertQuery,Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1,employee.getName());
-        statement.setString(2,employee.getDepartment());
+        PreparedStatement statement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, employee.getName());
+        statement.setString(2, employee.getDepartment());
         int affectedRows = statement.executeUpdate(insertQuery);
         try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 employee.setId(generatedKeys.getInt(1));
-            }
-            else {
+            } else {
                 throw new SQLException("Creating Employee failed, No Employee Id obtained.");
             }
         }
 
-        
+        employee.getSkillsMatrix().stream().forEach(skillMatrix -> {
+            try {
+                Skill skill = skillRepository.findByName(skillMatrix.getSkill().getName());
+                if(skill == null){
+                    skill = skillRepository.save(skill);
+                }
+                skillMatrixRepository.save(skillMatrix,skill.getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
 
 
         return employee;

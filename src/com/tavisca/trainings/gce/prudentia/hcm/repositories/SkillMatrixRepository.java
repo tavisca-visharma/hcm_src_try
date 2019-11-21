@@ -40,4 +40,9 @@ public class SkillMatrixRepository {
         }
         return skillMatrix;
     }
+
+    public SkillMatrix save(SkillMatrix skillMatrix, int skillId) {
+        //TODO :- to be implemented...
+        return skillMatrix;
+    }
 }

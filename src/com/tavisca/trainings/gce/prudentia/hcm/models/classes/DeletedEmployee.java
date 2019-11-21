@@ -1,8 +1,6 @@
 package com.tavisca.trainings.gce.prudentia.hcm.models.classes;
 
-import java.io.Serializable;
-
-public class DeletedEmployee implements Serializable {
+public class DeletedEmployee {
     private Employee employee;
 
     public DeletedEmployee() {
