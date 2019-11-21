@@ -1,6 +1,7 @@
 package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Employee;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.SkillMatrix;
 
@@ -16,27 +17,24 @@ public class EmployeeRepository {
     private Connection connection;
     private SkillMatrixRepository skillMatrixRepository;
 
-    public EmployeeRepository() throws SQLException, ClassNotFoundException {
-        this.connection = DBManager.getConnection();
+    public EmployeeRepository() throws BusinessException {
+            this.connection = DBManager.getConnection();
         skillMatrixRepository = new SkillMatrixRepository();
     }
 
     public Employee save(Employee employee) throws SQLException {
         String insertQuery = "insert into hcm_employee(emp_name,department) values(?,?)";
-        PreparedStatement statement = connection.prepareStatement(insertQuery,Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1,employee.getName());
-        statement.setString(2,employee.getDepartment());
+        PreparedStatement statement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, employee.getName());
+        statement.setString(2, employee.getDepartment());
         int affectedRows = statement.executeUpdate(insertQuery);
         try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 employee.setId(generatedKeys.getInt(1));
-            }
-            else {
+            } else {
                 throw new SQLException("Creating Employee failed, No Employee Id obtained.");
             }
         }
-
-        
 
 
         return employee;

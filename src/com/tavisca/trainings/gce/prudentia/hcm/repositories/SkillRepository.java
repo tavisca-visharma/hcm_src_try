@@ -1,6 +1,7 @@
 package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 
 import java.sql.Connection;
@@ -12,7 +13,7 @@ public class SkillRepository {
 
     private Connection connection;
 
-    public SkillRepository() throws SQLException, ClassNotFoundException {
+    public SkillRepository() throws BusinessException {
         connection = DBManager.getConnection();
     }
 

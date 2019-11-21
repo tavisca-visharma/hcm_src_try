@@ -1,6 +1,7 @@
 package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.SkillMatrix;
 import com.tavisca.trainings.gce.prudentia.hcm.models.enums.Level;
@@ -16,7 +17,7 @@ public class SkillMatrixRepository {
     private Connection connection;
     private SkillRepository skillRepository;
 
-    public SkillMatrixRepository() throws SQLException, ClassNotFoundException {
+    public SkillMatrixRepository() throws BusinessException {
         connection = DBManager.getConnection();
         skillRepository = new SkillRepository();
     }

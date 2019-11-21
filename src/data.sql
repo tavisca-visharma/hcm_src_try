@@ -15,19 +15,18 @@ create table hcm_skill_matrix(
     acquired varchar(255)
 );
 
-create table hcm_employee_skill_matrix(
-	emp_id int references hcm_employee(emp_id),
-    skill_matrix_id int references hcm_skill_matrix(skill_matrix_id),
-    primary key(emp_id,skill_matrix_id)
-);
-
 create table hcm_employee(
 	emp_id int primary key auto_increment,
     emp_name varchar(255),
     department varchar(255)
 );
 
-                                                    -- Select Queries
+create table hcm_employee_skill_matrix(
+	emp_id int references hcm_employee(emp_id),
+skill_matrix_id int references hcm_skill_matrix(skill_matrix_id),
+primary key(emp_id,skill_matrix_id)
+);
+ -- Select Queries
 
 select * from hcm_skill;
 select * from hcm_skill_matrix;

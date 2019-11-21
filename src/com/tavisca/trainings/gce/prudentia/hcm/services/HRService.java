@@ -1,5 +1,6 @@
 package com.tavisca.trainings.gce.prudentia.hcm.services;
 
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Employee;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 import com.tavisca.trainings.gce.prudentia.hcm.repositories.EmployeeRepository;
@@ -10,6 +11,10 @@ import java.util.Set;
 public class HRService {
 
     private EmployeeRepository employeeRepository;
+
+    public HRService() throws BusinessException {
+        employeeRepository = new EmployeeRepository();
+    }
 
     public Employee createProfile(int id) {
         return null;
