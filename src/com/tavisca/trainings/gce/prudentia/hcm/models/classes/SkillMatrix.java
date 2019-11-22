@@ -6,6 +6,7 @@ import java.time.Instant;
 
 public class SkillMatrix {
 
+    private int id;
     private Skill skill;
     private Level proficiency;
     private Instant acquired;
@@ -17,6 +18,14 @@ public class SkillMatrix {
         this.skill = skill;
         this.proficiency = proficiency;
         this.acquired = acquired;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Skill getSkill() {
@@ -45,10 +54,11 @@ public class SkillMatrix {
 
     @Override
     public String toString() {
-        return "\n\t\t\t" + "SkillMatrix{" +
-                "\n\t\t\t\t" + "skill=" + skill +
-                "," + "\n\t\t\t\t" + " proficiency=" + proficiency +
-                "," + "\n\t\t\t\t" + " acquired=" + acquired +
-                "," + "\n\t\t\t" + "}";
+        return "SkillMatrix{" +
+                "id=" + id +
+                ", skill=" + skill +
+                ", proficiency=" + proficiency +
+                ", acquired=" + acquired +
+                '}';
     }
 }

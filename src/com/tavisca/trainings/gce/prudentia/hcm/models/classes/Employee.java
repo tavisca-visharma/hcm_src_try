@@ -17,8 +17,7 @@ public class Employee implements EmployeeDuty {
     public Employee() {
     }
 
-    public Employee(int id, String name, String department, Set<SkillMatrix> skillMatrix) {
-        this.id = id;
+    public Employee( String name, String department, Set<SkillMatrix> skillMatrix) {
         this.name = name;
         this.department = department;
         this.skillMatrix = skillMatrix;

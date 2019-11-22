@@ -1,5 +1,6 @@
 package com.tavisca.trainings.gce.prudentia.hcm.models.classes;
 
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.interfaces.HRDuty;
 import com.tavisca.trainings.gce.prudentia.hcm.services.HRService;
 
@@ -9,6 +10,9 @@ import java.util.Set;
 public class HR extends Employee implements HRDuty {
 
     HRService hrService = new HRService();
+
+    public HR() throws BusinessException {
+    }
 
     @Override
     public Employee createProfile(int id) {

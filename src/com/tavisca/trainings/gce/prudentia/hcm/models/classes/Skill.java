@@ -9,8 +9,7 @@ public class Skill {
     public Skill() {
     }
 
-    public Skill(int id, String name, String description) {
-        this.id = id;
+    public Skill(String name, String description) {
         this.name = name;
         this.description = description;
     }

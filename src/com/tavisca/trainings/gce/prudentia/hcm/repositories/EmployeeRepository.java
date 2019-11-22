@@ -1,6 +1,7 @@
 package com.tavisca.trainings.gce.prudentia.hcm.repositories;
 
 import com.tavisca.trainings.gce.prudentia.hcm.dataAccess.DBManager;
+import com.tavisca.trainings.gce.prudentia.hcm.infra.BusinessException;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Employee;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.Skill;
 import com.tavisca.trainings.gce.prudentia.hcm.models.classes.SkillMatrix;
@@ -18,37 +19,50 @@ public class EmployeeRepository {
     private SkillMatrixRepository skillMatrixRepository;
     private SkillRepository skillRepository;
 
-    public EmployeeRepository() throws SQLException, ClassNotFoundException {
+    public EmployeeRepository() throws BusinessException {
         this.connection = DBManager.getConnection();
         skillMatrixRepository = new SkillMatrixRepository();
         skillRepository = new SkillRepository();
     }
 
     public Employee save(Employee employee) throws SQLException {
-        String insertQuery = "insert into hcm_employee(emp_name,department) values(?,?)";
-        PreparedStatement statement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1, employee.getName());
-        statement.setString(2, employee.getDepartment());
-        int affectedRows = statement.executeUpdate(insertQuery);
-        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                employee.setId(generatedKeys.getInt(1));
-            } else {
-                throw new SQLException("Creating Employee failed, No Employee Id obtained.");
-            }
-        }
-
-        employee.getSkillsMatrix().stream().forEach(skillMatrix -> {
-            try {
-                Skill skill = skillRepository.findByName(skillMatrix.getSkill().getName());
-                if(skill == null){
-                    skill = skillRepository.save(skill);
+        connection.setAutoCommit(false);
+        try {
+            String insertQuery = "INSERT INTO hcm_employee(emp_name,department) VALUES(?,?)";
+            PreparedStatement statement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, employee.getName());
+            statement.setString(2, employee.getDepartment());
+            int affectedRows = statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    employee.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating Employee failed, No Employee Id obtained.");
                 }
-                skillMatrixRepository.save(skillMatrix,skill.getId());
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
-        });
+
+
+            for (SkillMatrix skillMatrix : employee.getSkillsMatrix()) {
+
+                Skill skill = skillRepository.findByName(skillMatrix.getSkill().getName());
+                if (skill == null) {
+                    skill = skillRepository.save(skillMatrix.getSkill());
+                }
+                skillMatrix.setSkill(skill);
+                skillMatrixRepository.save(skillMatrix);
+                String referenceQuery = "INSERT INTO hcm_employee_skill_matrix VALUES(?,?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(referenceQuery);
+                preparedStatement.setInt(1, employee.getId());
+                preparedStatement.setInt(2, skillMatrix.getId());
+                int affectedRows1 = preparedStatement.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            connection.rollback();
+            connection.setAutoCommit(true);
+        }
 
 
         return employee;
@@ -71,12 +85,15 @@ public class EmployeeRepository {
             while (rs.next()) {
                 int skill_matrix_id = rs.getInt("skill_matrix_id");
                 SkillMatrix skillMatrix = skillMatrixRepository.findById(skill_matrix_id);
+                skillMatrix.setId(skill_matrix_id);
                 skill_matrices.add(skillMatrix);
             }
             rs.close();
             statement.close();
 
-            employees.add(new Employee(empId, empName, department, skill_matrices));
+            Employee employee = new Employee(empName, department, skill_matrices);
+            employee.setId(empId);
+            employees.add(employee);
         }
         return employees;
     }

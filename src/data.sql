@@ -42,9 +42,23 @@ insert into hcm_employee(emp_name,department) values("Vishal", "ABC");
 insert into hcm_skill_matrix(skill_id,proficiency,acquired) values("1","1","10-10-2019");
 insert into hcm_employee_skill_matrix values(1,1);
 
+insert into hcm_skill(skill_name,description) values("Java Language","OOP Language");
+insert into hcm_employee(emp_name,department) values("Sharma", "Tavisca");
+insert into hcm_skill_matrix(skill_id,proficiency,acquired) values("2","2","01-07-2019");
+insert into hcm_employee_skill_matrix values(2,2);
+
+
                                                     -- Drop Queries
 
 drop table hcm_skill_matrix;
 drop table hcm_skill;
 drop table hcm_employee_skill_matrix;
 drop table hcm_employee;
+
+
+                                                    -- Truncate Queries
+
+truncate table hcm_skill_matrix;
+truncate table hcm_skill;
+truncate table hcm_employee_skill_matrix;
+truncate table hcm_employee;
